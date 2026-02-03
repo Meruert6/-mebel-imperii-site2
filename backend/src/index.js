@@ -24,7 +24,10 @@ const __dirname = path.dirname(__filename);
 const uploadsPath = path.join(__dirname, '..', 'uploads');
 
 // Middleware
-app.use(cors());
+const corsOrigin = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim())
+  : true;
+app.use(cors({ origin: corsOrigin }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadsPath));
