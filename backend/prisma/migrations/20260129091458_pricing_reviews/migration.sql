@@ -1,0 +1,32 @@
+-- AlterTable
+ALTER TABLE "Kitchen" ADD COLUMN "discountPercent" INTEGER;
+ALTER TABLE "Kitchen" ADD COLUMN "priceDiscount" INTEGER;
+ALTER TABLE "Kitchen" ADD COLUMN "priceOriginal" INTEGER;
+ALTER TABLE "Kitchen" ADD COLUMN "videoUrl" TEXT;
+
+-- CreateTable
+CREATE TABLE "FacadeImage" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "url" TEXT NOT NULL,
+    "facadeId" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "FacadeImage_facadeId_fkey" FOREIGN KEY ("facadeId") REFERENCES "Facade" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Review" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "rating" INTEGER NOT NULL,
+    "comment" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
+CREATE TABLE "ReviewImage" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "url" TEXT NOT NULL,
+    "reviewId" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "ReviewImage_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);

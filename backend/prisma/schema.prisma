@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  kitchens  Kitchen[]
+  createdAt DateTime  @default(now())
+}
+
+model Material {
+  id        Int               @id @default(autoincrement())
+  name      String            @unique
+  kitchens  KitchenMaterial[]
+  createdAt DateTime          @default(now())
+}
+
+model Facade {
+  id        Int             @id @default(autoincrement())
+  name      String          @unique
+  kitchens  KitchenFacade[]
+  images    FacadeImage[]
+  createdAt DateTime        @default(now())
+}
+
+model Kitchen {
+  id          Int               @id @default(autoincrement())
+  name        String
+  description String?
+  priceFrom   Int?
+  priceOriginal Int?
+  priceDiscount Int?
+  discountPercent Int?
+  videoUrl    String?
+  categoryId  Int?
+  category    Category?         @relation(fields: [categoryId], references: [id])
+  materials   KitchenMaterial[]
+  facades     KitchenFacade[]
+  images      KitchenImage[]
+  requests    Request[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model KitchenImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  kitchenId Int
+  kitchen   Kitchen  @relation(fields: [kitchenId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model FacadeImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  facadeId  Int
+  facade    Facade   @relation(fields: [facadeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model KitchenMaterial {
+  kitchenId  Int
+  materialId Int
+  kitchen    Kitchen  @relation(fields: [kitchenId], references: [id], onDelete: Cascade)
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@id([kitchenId, materialId])
+}
+
+model KitchenFacade {
+  kitchenId Int
+  facadeId  Int
+  kitchen   Kitchen @relation(fields: [kitchenId], references: [id], onDelete: Cascade)
+  facade    Facade  @relation(fields: [facadeId], references: [id], onDelete: Cascade)
+
+  @@id([kitchenId, facadeId])
+}
+
+model Request {
+  id        Int           @id @default(autoincrement())
+  name      String
+  phone     String
+  comment   String?
+  status    String        @default("NEW")
+  kitchenId Int?
+  kitchen   Kitchen?      @relation(fields: [kitchenId], references: [id], onDelete: SetNull)
+  createdAt DateTime      @default(now())
+}
+
+model Review {
+  id        Int          @id @default(autoincrement())
+  name      String
+  rating    Int
+  comment   String?
+  images    ReviewImage[]
+  createdAt DateTime     @default(now())
+}
+
+model ReviewImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  reviewId  Int
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
